@@ -178,7 +178,7 @@ Build a frontend-only Next.js 16+ prototype for the University of Santo Tomas Lo
     - **Property 12: Search filter matches only generic label for protected items** — generate random search string and random protected item; assert item appears iff generic label contains query; real title/description must not be used for matching
     - **Validates: Requirements 8.9, 12.8**
 
-- [-] 13. Implement the Item Detail page (`/items/[id]`)
+- [x] 13. Implement the Item Detail page (`/items/[id]`)
   - Create `src/app/items/[id]/page.tsx` as a `"use client"` component
   - Use `use(params)` (React 19 API) to unwrap the `params` Promise and extract `id`
   - Look up item from store by `id`; if not found, render "Item not found" message with a link back to `/items`
@@ -191,17 +191,17 @@ Build a frontend-only Next.js 16+ prototype for the University of Santo Tomas Lo
   - When `user` is null: do not render status action buttons
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10, 9.11, 9.12, 12.5, 12.6, 13.7_
 
-  - [-] 13.1 Write property test for Item Detail privacy rendering (Property 9)
+  - [x] 13.1 Write property test for Item Detail privacy rendering (Property 9)
     - **Property 9: Item Detail Page applies privacy rule and shows notice for protected items** — generate random protected item; render the detail page component; assert amber notice block is shown and same title/description/image hiding as Property 8 applies
     - **Validates: Requirements 12.5, 12.6**
 
-- [~] 14. Implement the Report Lost page (`/report/lost`)
+- [x] 14. Implement the Report Lost page (`/report/lost`)
   - Create `src/app/report/lost/page.tsx`
   - Render `<ItemForm type="lost" />` with a page heading "Report a Lost Item"
   - No additional logic needed — all behavior is in `ItemForm`
   - _Requirements: 10.1_
 
-- [~] 15. Implement the Report Found page (`/report/found`)
+- [-] 15. Implement the Report Found page (`/report/found`)
   - Create `src/app/report/found/page.tsx`
   - Render `<ItemForm type="found" />` with a page heading "Report a Found Item"
   - No additional logic needed — all behavior is in `ItemForm`

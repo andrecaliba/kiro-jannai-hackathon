@@ -143,7 +143,7 @@ The same required and optional fields apply. On successful submission, the item 
 
 ## 8. Item Detail Page
 
-Each item has a detail page at `/items/[id]`. It is accessible to both guests and signed-in users.
+Each item has a detail page at `/items/[id]`.
 
 **Page sections:**
 
@@ -155,9 +155,9 @@ Each item has a detail page at `/items/[id]`. It is accessible to both guests an
 | Privacy notice block | Protected items only. Explains that details are hidden and ownership is verified privately. |
 | Description | Unprotected items only. |
 | Info grid (location, date, reporter, contact email) | Always visible. |
-| Verification Panel | Signed-in users only, when a claim answer has been submitted. |
-| Action buttons (Mark as Claimed, Mark as Resolved, Claim This Item) | Signed-in users only, when item status is `open`. |
-| Claim Flow panel | Signed-in users only, when "Claim This Item" is clicked. |
+| Verification Panel | When a claim answer has been submitted. |
+| Action buttons (Mark as Claimed, Mark as Resolved, Claim This Item) | When item status is `open`. |
+| Claim Flow panel | When "Claim This Item" is clicked. |
 | Confirmation message | Shown after a claim answer is successfully submitted. |
 
 ---
@@ -261,7 +261,7 @@ Lost items in the following categories are considered **protected** and have the
 **What is never hidden:**
 
 - Location, date, reporter name, contact email — always visible.
-- `secret_detail` — stored privately and only revealed inside the Claim Flow to signed-in users.
+- `secret_detail` — stored privately and only revealed inside the Claim Flow.
 
 ---
 

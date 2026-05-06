@@ -201,13 +201,13 @@ Build a frontend-only Next.js 16+ prototype for the University of Santo Tomas Lo
   - No additional logic needed — all behavior is in `ItemForm`
   - _Requirements: 10.1_
 
-- [-] 15. Implement the Report Found page (`/report/found`)
+- [x] 15. Implement the Report Found page (`/report/found`)
   - Create `src/app/report/found/page.tsx`
   - Render `<ItemForm type="found" />` with a page heading "Report a Found Item"
   - No additional logic needed — all behavior is in `ItemForm`
   - _Requirements: 11.1_
 
-- [~] 16. Checkpoint — Ensure all tests pass
+- [-] 16. Checkpoint — Ensure all tests pass
   - Run `npm run lint` and fix any ESLint errors
   - Run `npm run build` and resolve any TypeScript errors
   - Verify all routes render without crashing: `/login`, `/dashboard`, `/items`, `/items/[id]` (any valid id), `/report/lost`, `/report/found`

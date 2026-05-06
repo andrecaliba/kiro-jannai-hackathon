@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/store";
@@ -37,7 +37,12 @@ function formatDate(dateStr: string): string {
 export default function ItemDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const router = useRouter();
-  const { items, user, updateItemStatus } = useStore();
+  const { items, user, updateItemStatus, submitClaimAnswer } = useStore();
+
+  const [claimFlowOpen, setClaimFlowOpen] = useState(false);
+  const [claimAnswer, setClaimAnswer] = useState("");
+  const [claimAnswerError, setClaimAnswerError] = useState("");
+  const [submitConfirmed, setSubmitConfirmed] = useState(false);
 
   const item = items.find((i) => i.id === id);
 
@@ -61,6 +66,13 @@ export default function ItemDetailPage({ params }: PageProps) {
   const protected_ = isProtected(item);
   const displayTitle = protected_ ? getGenericLabel(item.category) : item.title;
 
+  const showClaimButton =
+    user !== null &&
+    item.status === "open" &&
+    item.secret_detail !== undefined &&
+    item.claim_answer === undefined &&
+    user.email !== item.contact_email;
+
   function handleMarkClaimed() {
     updateItemStatus(item!.id, "claimed");
   }
@@ -68,6 +80,23 @@ export default function ItemDetailPage({ params }: PageProps) {
   function handleMarkResolved() {
     updateItemStatus(item!.id, "resolved");
     router.refresh();
+  }
+
+  function handleSubmitAnswer() {
+    const trimmedAnswer = claimAnswer.trim();
+    if (!trimmedAnswer) {
+      setClaimAnswerError("Please enter an answer before submitting.");
+      return;
+    }
+    submitClaimAnswer(item!.id, trimmedAnswer, user!.name);
+    setClaimFlowOpen(false);
+    setSubmitConfirmed(true);
+  }
+
+  function handleCancelClaim() {
+    setClaimFlowOpen(false);
+    setClaimAnswer("");
+    setClaimAnswerError("");
   }
 
   return (
@@ -164,6 +193,29 @@ export default function ItemDetailPage({ params }: PageProps) {
         </div>
       </Card>
 
+      {/* Verification Panel — shown to signed-in users when a claim has been submitted */}
+      {user !== null && item.claim_answer !== undefined && (
+        <Card className="p-5 mb-6 border-l-4 border-amber-500">
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            Claim Submitted
+          </h2>
+          <div className="space-y-2">
+            <div>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                Claimant
+              </p>
+              <p className="text-gray-800 text-sm">{item.claimant_name}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                Answer
+              </p>
+              <p className="text-gray-800 text-sm">{item.claim_answer}</p>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Status action buttons — only for signed-in users viewing open items */}
       {user !== null && item.status === "open" && (
         <div className="flex flex-wrap gap-3">
@@ -177,6 +229,66 @@ export default function ItemDetailPage({ params }: PageProps) {
           >
             Mark as Resolved
           </button>
+          {showClaimButton && (
+            <Button variant="primary" onClick={() => setClaimFlowOpen(true)}>
+              Claim This Item
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* Claim Flow panel */}
+      {claimFlowOpen && user !== null && (
+        <Card className="p-5 mt-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            Verify Your Ownership
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            <strong>Secret detail:</strong> {item.secret_detail}
+          </p>
+          <div className="mb-4">
+            <label htmlFor="claimAnswer" className="block text-sm font-medium text-gray-700 mb-1">
+              Your Answer
+            </label>
+            <textarea
+              id="claimAnswer"
+              value={claimAnswer}
+              onChange={(e) => {
+                setClaimAnswer(e.target.value);
+                setClaimAnswerError("");
+              }}
+              rows={3}
+              className="border border-gray-300 rounded-lg px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-ust-gold"
+              placeholder="Enter your answer..."
+            />
+            {claimAnswerError && (
+              <p className="text-red-500 text-xs mt-1">{claimAnswerError}</p>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="primary" onClick={handleSubmitAnswer}>
+              Submit Answer
+            </Button>
+            <button
+              type="button"
+              onClick={handleCancelClaim}
+              className="px-4 py-2 rounded-lg font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
+        </Card>
+      )}
+
+      {/* Confirmation message after successful claim submission */}
+      {submitConfirmed && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-6">
+          <p className="text-green-800 text-sm font-medium mb-1">
+            Answer Submitted
+          </p>
+          <p className="text-green-700 text-sm">
+            Your answer has been recorded. The reporter will review it and be in touch to confirm ownership.
+          </p>
         </div>
       )}
     </div>

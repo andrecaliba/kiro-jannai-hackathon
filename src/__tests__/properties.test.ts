@@ -67,6 +67,9 @@ function itemArb(
     contact_email: emailArb,
     reporter_name: nonEmptyStringArb,
     created_at: isoDateTimeArb,
+    secret_detail: fc.option(nonEmptyStringArb, { nil: undefined }),
+    claim_answer: fc.option(nonEmptyStringArb, { nil: undefined }),
+    claimant_name: fc.option(nonEmptyStringArb, { nil: undefined }),
   });
 }
 
@@ -155,6 +158,9 @@ const itemPayloadArb = fc.record<Omit<Item, "id" | "created_at">>({
   status: statusArb,
   contact_email: emailArb,
   reporter_name: nonEmptyStringArb,
+  secret_detail: fc.option(nonEmptyStringArb, { nil: undefined }),
+  claim_answer: fc.option(nonEmptyStringArb, { nil: undefined }),
+  claimant_name: fc.option(nonEmptyStringArb, { nil: undefined }),
 });
 
 /** Arbitrary for a full Item (with id and created_at) */
@@ -171,6 +177,9 @@ const fullItemArb = fc.record<Item>({
   contact_email: emailArb,
   reporter_name: nonEmptyStringArb,
   created_at: isoDateTimeArb,
+  secret_detail: fc.option(nonEmptyStringArb, { nil: undefined }),
+  claim_answer: fc.option(nonEmptyStringArb, { nil: undefined }),
+  claimant_name: fc.option(nonEmptyStringArb, { nil: undefined }),
 });
 
 /** Arbitrary for a non-empty array of Items with unique ids */
@@ -794,6 +803,459 @@ test(
           // `appeared === shouldAppear` already covers this fully.
 
           return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 14 (item-claim-verification, Property 1): submitClaimAnswer updates only target item
+// Validates: Requirements 3.2
+// ---------------------------------------------------------------------------
+
+test(
+  "Feature: item-claim-verification, Property 1: submitClaimAnswer updates only the target item's claim fields",
+  () => {
+    fc.assert(
+      fc.property(
+        nonEmptyItemsArb,
+        fc.nat(),
+        nonEmptyStringArb,
+        nonEmptyStringArb,
+        (items, indexSeed, claimAnswer, claimantName) => {
+          const targetIndex = indexSeed % items.length;
+          const targetId = items[targetIndex].id;
+
+          useStore.setState({ items });
+          useStore.getState().submitClaimAnswer(targetId, claimAnswer, claimantName);
+
+          const updatedItems = useStore.getState().items;
+
+          if (updatedItems.length !== items.length) return false;
+
+          for (let i = 0; i < items.length; i++) {
+            const original = items[i];
+            const updated = updatedItems[i];
+
+            if (original.id === targetId) {
+              // Target item: claim_answer and claimant_name must be updated
+              if (updated.claim_answer !== claimAnswer) return false;
+              if (updated.claimant_name !== claimantName) return false;
+              // All other fields must be unchanged
+              if (updated.id !== original.id) return false;
+              if (updated.title !== original.title) return false;
+              if (updated.type !== original.type) return false;
+              if (updated.category !== original.category) return false;
+              if (updated.status !== original.status) return false;
+              if (updated.description !== original.description) return false;
+              if (updated.location !== original.location) return false;
+              if (updated.date !== original.date) return false;
+              if (updated.contact_email !== original.contact_email) return false;
+              if (updated.reporter_name !== original.reporter_name) return false;
+              if (updated.created_at !== original.created_at) return false;
+              if (updated.secret_detail !== original.secret_detail) return false;
+            } else {
+              // Non-target items: completely unchanged
+              if (updated.id !== original.id) return false;
+              if (updated.title !== original.title) return false;
+              if (updated.type !== original.type) return false;
+              if (updated.category !== original.category) return false;
+              if (updated.status !== original.status) return false;
+              if (updated.description !== original.description) return false;
+              if (updated.location !== original.location) return false;
+              if (updated.date !== original.date) return false;
+              if (updated.contact_email !== original.contact_email) return false;
+              if (updated.reporter_name !== original.reporter_name) return false;
+              if (updated.created_at !== original.created_at) return false;
+              if (updated.secret_detail !== original.secret_detail) return false;
+              if (updated.claim_answer !== original.claim_answer) return false;
+              if (updated.claimant_name !== original.claimant_name) return false;
+            }
+          }
+
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 15 (item-claim-verification, Property 2): submitClaimAnswer with unknown id leaves items unchanged
+// Validates: Requirements 3.3
+// ---------------------------------------------------------------------------
+
+test(
+  "Feature: item-claim-verification, Property 2: submitClaimAnswer with unknown id leaves items unchanged",
+  () => {
+    fc.assert(
+      fc.property(
+        nonEmptyItemsArb,
+        fc.uuid(),
+        nonEmptyStringArb,
+        nonEmptyStringArb,
+        (items, unknownId, claimAnswer, claimantName) => {
+          // Ensure the generated id does not match any item
+          const existingIds = new Set(items.map((i) => i.id));
+          if (existingIds.has(unknownId)) return true; // skip this run
+
+          useStore.setState({ items });
+          useStore.getState().submitClaimAnswer(unknownId, claimAnswer, claimantName);
+
+          const updatedItems = useStore.getState().items;
+
+          if (updatedItems.length !== items.length) return false;
+
+          for (let i = 0; i < items.length; i++) {
+            const original = items[i];
+            const updated = updatedItems[i];
+            if (updated.id !== original.id) return false;
+            if (updated.title !== original.title) return false;
+            if (updated.type !== original.type) return false;
+            if (updated.category !== original.category) return false;
+            if (updated.status !== original.status) return false;
+            if (updated.description !== original.description) return false;
+            if (updated.location !== original.location) return false;
+            if (updated.date !== original.date) return false;
+            if (updated.contact_email !== original.contact_email) return false;
+            if (updated.reporter_name !== original.reporter_name) return false;
+            if (updated.created_at !== original.created_at) return false;
+            if (updated.secret_detail !== original.secret_detail) return false;
+            if (updated.claim_answer !== original.claim_answer) return false;
+            if (updated.claimant_name !== original.claimant_name) return false;
+          }
+
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 16 (item-claim-verification, Property 3): addItem persists secret_detail when provided
+// Validates: Requirements 3.5
+// ---------------------------------------------------------------------------
+
+test(
+  "Feature: item-claim-verification, Property 3: addItem persists secret_detail when provided",
+  () => {
+    fc.assert(
+      fc.property(
+        itemPayloadArb,
+        nonEmptyStringArb,
+        (payload, secretDetail) => {
+          useStore.setState({ items: [] });
+
+          const payloadWithSecret = { ...payload, secret_detail: secretDetail };
+          useStore.getState().addItem(payloadWithSecret);
+
+          const items = useStore.getState().items;
+          if (items.length !== 1) return false;
+
+          const newItem = items[0];
+          return newItem.secret_detail === secretDetail;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 17 (item-claim-verification, Property 4): updateItemStatus preserves claim_answer and claimant_name
+// Validates: Requirements 8.3
+// ---------------------------------------------------------------------------
+
+test(
+  "Feature: item-claim-verification, Property 4: updateItemStatus preserves claim_answer and claimant_name",
+  () => {
+    fc.assert(
+      fc.property(
+        nonEmptyItemsArb,
+        fc.nat(),
+        statusArb,
+        nonEmptyStringArb,
+        nonEmptyStringArb,
+        (items, indexSeed, newStatus, claimAnswer, claimantName) => {
+          const targetIndex = indexSeed % items.length;
+          const targetId = items[targetIndex].id;
+
+          // Set claim_answer and claimant_name on the target item
+          const itemsWithClaim = items.map((item, i) =>
+            i === targetIndex
+              ? { ...item, claim_answer: claimAnswer, claimant_name: claimantName }
+              : item
+          );
+
+          useStore.setState({ items: itemsWithClaim });
+          useStore.getState().updateItemStatus(targetId, newStatus);
+
+          const updatedItems = useStore.getState().items;
+          const updatedTarget = updatedItems.find((i) => i.id === targetId);
+
+          if (!updatedTarget) return false;
+
+          // claim_answer and claimant_name must be preserved
+          if (updatedTarget.claim_answer !== claimAnswer) return false;
+          if (updatedTarget.claimant_name !== claimantName) return false;
+          // Status must be updated
+          if (updatedTarget.status !== newStatus) return false;
+
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 18 (item-claim-verification, Property 5): Secret detail trimming on form submission
+// Validates: Requirements 2.4
+// ---------------------------------------------------------------------------
+
+/**
+ * Replicates the secret_detail trimming logic from ItemForm.tsx handleSubmit.
+ */
+function applySecretDetailTrimming(rawInput: string): string | undefined {
+  return rawInput.trim() || undefined;
+}
+
+test(
+  "Feature: item-claim-verification, Property 5: Secret detail trimming — non-empty input is trimmed before passing to addItem",
+  () => {
+    // Generate strings that have non-whitespace content (possibly with surrounding whitespace)
+    const nonEmptyWithPossibleWhitespaceArb = fc
+      .string({ minLength: 1, maxLength: 80 })
+      .filter((s) => s.trim().length > 0);
+
+    fc.assert(
+      fc.property(nonEmptyWithPossibleWhitespaceArb, (rawInput) => {
+        const result = applySecretDetailTrimming(rawInput);
+        // Must be defined (non-empty after trim)
+        if (result === undefined) return false;
+        // Must equal the trimmed version
+        if (result !== rawInput.trim()) return false;
+        return true;
+      }),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 19 (item-claim-verification, Property 6): Claim answer trimming
+// Validates: Requirements 5.7
+// ---------------------------------------------------------------------------
+
+/**
+ * Replicates the claim answer trimming logic from the Item Detail Page handleSubmitAnswer.
+ */
+function applyClaimAnswerTrimming(rawAnswer: string): string | null {
+  const trimmed = rawAnswer.trim();
+  if (!trimmed) return null; // validation error — submitClaimAnswer not called
+  return trimmed;
+}
+
+test(
+  "Feature: item-claim-verification, Property 6: Claim answer trimming — non-empty answer is trimmed before calling submitClaimAnswer",
+  () => {
+    const nonEmptyWithPossibleWhitespaceArb = fc
+      .string({ minLength: 1, maxLength: 80 })
+      .filter((s) => s.trim().length > 0);
+
+    fc.assert(
+      fc.property(nonEmptyWithPossibleWhitespaceArb, (rawAnswer) => {
+        const result = applyClaimAnswerTrimming(rawAnswer);
+        // Must not be null (non-empty after trim)
+        if (result === null) return false;
+        // Must equal the trimmed version
+        if (result !== rawAnswer.trim()) return false;
+        return true;
+      }),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 20 (item-claim-verification, Property 7): Empty claim answer is rejected
+// Validates: Requirements 5.6
+// ---------------------------------------------------------------------------
+
+test(
+  "Feature: item-claim-verification, Property 7: Empty or whitespace-only claim answer is rejected — submitClaimAnswer is not called",
+  () => {
+    fc.assert(
+      fc.property(emptyFieldArb, (emptyAnswer) => {
+        const result = applyClaimAnswerTrimming(emptyAnswer);
+        // Must return null (validation error — submitClaimAnswer not called)
+        return result === null;
+      }),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 21 (item-claim-verification, Property 8): secret_detail is never exposed in search filter
+// Validates: Requirements 7.5
+// ---------------------------------------------------------------------------
+
+/**
+ * Replicates the filter logic from src/app/items/page.tsx.
+ * This is the same filterItems function already defined above in this file.
+ * We use it directly to test that secret_detail is not included in search matching.
+ */
+
+test(
+  "Feature: item-claim-verification, Property 8: secret_detail is never exposed in search filter logic",
+  () => {
+    // Generate an unprotected item where secret_detail matches the query but title/description do not
+    const nonHighValueCategoryArb = fc.constantFrom(...NON_HIGH_VALUE_CATEGORIES);
+
+    fc.assert(
+      fc.property(
+        // Generate a search query
+        nonEmptyStringArb,
+        // Generate an unprotected item
+        fc.record<Item>({
+          id: fc.uuid(),
+          type: fc.constantFrom<Item["type"]>("lost", "found"),
+          title: nonEmptyStringArb,
+          description: nonEmptyStringArb,
+          category: nonHighValueCategoryArb,
+          location: locationArb,
+          date: isoDateArb,
+          image_url: fc.option(fc.webUrl(), { nil: undefined }),
+          status: statusArb,
+          contact_email: emailArb,
+          reporter_name: nonEmptyStringArb,
+          created_at: isoDateTimeArb,
+          secret_detail: nonEmptyStringArb,
+          claim_answer: fc.option(nonEmptyStringArb, { nil: undefined }),
+          claimant_name: fc.option(nonEmptyStringArb, { nil: undefined }),
+        }),
+        (search, item) => {
+          // Skip if item is protected (different filter path)
+          if (isProtected(item)) return true;
+
+          const query = search.toLowerCase();
+          const titleMatches = item.title.toLowerCase().includes(query);
+          const descriptionMatches = item.description.toLowerCase().includes(query);
+
+          // Only test the case where title and description do NOT match
+          if (titleMatches || descriptionMatches) return true; // skip
+
+          const filters: Filters = { search, type: "", category: "", status: "" };
+          const result = filterItems([item], filters);
+
+          // Item must NOT appear in results (secret_detail must not be searched)
+          return result.length === 0;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 22 (item-claim-verification, Property 9): "Claim This Item" button hidden when claim_answer is set
+// Validates: Requirements 6.7
+// ---------------------------------------------------------------------------
+
+/**
+ * Replicates the showClaimButton logic from src/app/items/[id]/page.tsx.
+ */
+function computeShowClaimButton(
+  user: { email: string } | null,
+  item: Item
+): boolean {
+  return (
+    user !== null &&
+    item.status === "open" &&
+    item.secret_detail !== undefined &&
+    item.claim_answer === undefined &&
+    user.email !== item.contact_email
+  );
+}
+
+test(
+  "Feature: item-claim-verification, Property 9: Claim This Item button is hidden when claim_answer is already set",
+  () => {
+    fc.assert(
+      fc.property(
+        fc.record<Item>({
+          id: fc.uuid(),
+          type: fc.constantFrom<Item["type"]>("lost", "found"),
+          title: nonEmptyStringArb,
+          description: nonEmptyStringArb,
+          category: fc.constantFrom(...CATEGORIES),
+          location: locationArb,
+          date: isoDateArb,
+          image_url: fc.option(fc.webUrl(), { nil: undefined }),
+          status: fc.constant<Item["status"]>("open"),
+          contact_email: emailArb,
+          reporter_name: nonEmptyStringArb,
+          created_at: isoDateTimeArb,
+          secret_detail: nonEmptyStringArb,
+          claim_answer: nonEmptyStringArb, // claim_answer is always defined
+          claimant_name: fc.option(nonEmptyStringArb, { nil: undefined }),
+        }),
+        emailArb,
+        (item, userEmail) => {
+          // Ensure user is not the reporter
+          const user = { email: userEmail !== item.contact_email ? userEmail : `other-${userEmail}` };
+          const showButton = computeShowClaimButton(user, item);
+          // Button must NOT be shown when claim_answer is defined
+          return showButton === false;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Property 23 (item-claim-verification, Property 10): "Claim This Item" button hidden for non-open items
+// Validates: Requirements 4.4
+// ---------------------------------------------------------------------------
+
+test(
+  "Feature: item-claim-verification, Property 10: Claim This Item button is hidden for claimed or resolved items",
+  () => {
+    const nonOpenStatusArb = fc.constantFrom<Item["status"]>("claimed", "resolved");
+
+    fc.assert(
+      fc.property(
+        fc.record<Item>({
+          id: fc.uuid(),
+          type: fc.constantFrom<Item["type"]>("lost", "found"),
+          title: nonEmptyStringArb,
+          description: nonEmptyStringArb,
+          category: fc.constantFrom(...CATEGORIES),
+          location: locationArb,
+          date: isoDateArb,
+          image_url: fc.option(fc.webUrl(), { nil: undefined }),
+          status: nonOpenStatusArb,
+          contact_email: emailArb,
+          reporter_name: nonEmptyStringArb,
+          created_at: isoDateTimeArb,
+          secret_detail: fc.option(nonEmptyStringArb, { nil: undefined }),
+          claim_answer: fc.option(nonEmptyStringArb, { nil: undefined }),
+          claimant_name: fc.option(nonEmptyStringArb, { nil: undefined }),
+        }),
+        emailArb,
+        (item, userEmail) => {
+          const user = { email: userEmail };
+          const showButton = computeShowClaimButton(user, item);
+          // Button must NOT be shown for claimed or resolved items
+          return showButton === false;
         }
       ),
       { numRuns: 100 }

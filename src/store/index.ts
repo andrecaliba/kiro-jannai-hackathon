@@ -119,6 +119,36 @@ export const MOCK_ITEMS: Item[] = [
     reporter_name: "Antonio Garcia",
     created_at: "2025-01-21T17:50:00.000Z",
   },
+  {
+    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+    type: "lost",
+    title: "iPhone 14 Pro",
+    description:
+      "Space black iPhone 14 Pro with a clear case. Has a small crack on the bottom-left corner of the screen.",
+    category: "Electronics",
+    location: "Main Building",
+    date: "2025-01-25",
+    status: "open",
+    contact_email: "pcruz@ust.edu.ph",
+    reporter_name: "Patricia Cruz",
+    created_at: "2025-01-25T09:00:00.000Z",
+    secret_detail: "What color is the phone case?",
+  },
+  {
+    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+    type: "lost",
+    title: "Calculus Textbook",
+    description:
+      "Stewart Calculus 8th edition with a blue sticky note on the cover. Name written inside: 'R. Bautista'.",
+    category: "Books and Notes",
+    location: "UST Library",
+    date: "2025-01-26",
+    status: "open",
+    contact_email: "rbautista@ust.edu.ph",
+    reporter_name: "Ramon Bautista",
+    created_at: "2025-01-26T11:30:00.000Z",
+    secret_detail: "There is a blue sticky note on the front cover.",
+  },
 ];
 
 interface StoreState {
@@ -132,6 +162,7 @@ interface StoreState {
   signOut: () => void;
   addItem: (item: Omit<Item, "id" | "created_at">) => void;
   updateItemStatus: (id: string, status: Item["status"]) => void;
+  submitClaimAnswer: (id: string, claim_answer: string, claimant_name: string) => void;
   setFilters: (partial: Partial<Filters>) => void;
   resetFilters: () => void;
 }
@@ -170,6 +201,13 @@ export const useStore = create<StoreState>((set) => ({
     set((state) => ({
       items: state.items.map((item) =>
         item.id === id ? { ...item, status } : item
+      ),
+    })),
+
+  submitClaimAnswer: (id, claim_answer, claimant_name) =>
+    set((state) => ({
+      items: state.items.map((item) =>
+        item.id === id ? { ...item, claim_answer, claimant_name } : item
       ),
     })),
 

@@ -36,6 +36,7 @@ export default function ItemForm({ type }: ItemFormProps) {
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [secretDetail, setSecretDetail] = useState("");
   const [reporterName, setReporterName] = useState(user?.name ?? "");
   const [contactEmail, setContactEmail] = useState(user?.email ?? "");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -76,6 +77,7 @@ export default function ItemForm({ type }: ItemFormProps) {
       status: "open",
       reporter_name: reporterName.trim(),
       contact_email: contactEmail.trim(),
+      secret_detail: secretDetail.trim() || undefined,
     });
 
     router.push("/dashboard");
@@ -206,6 +208,26 @@ export default function ItemForm({ type }: ItemFormProps) {
               className={inputClass}
               placeholder="https://example.com/image.jpg"
             />
+          </div>
+
+          {/* Secret Verification Detail (optional) */}
+          <div>
+            <label htmlFor="secretDetail" className={labelClass}>
+              Secret Verification Detail{" "}
+              <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <input
+              id="secretDetail"
+              type="text"
+              value={secretDetail}
+              onChange={(e) => setSecretDetail(e.target.value)}
+              className={inputClass}
+              placeholder="e.g. What color is the phone case?"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              This will never be shown publicly. It will only be revealed to
+              signed-in users who initiate a claim, so you can verify ownership.
+            </p>
           </div>
 
           {/* Reporter Name */}

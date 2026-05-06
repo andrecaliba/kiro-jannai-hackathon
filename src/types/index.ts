@@ -11,6 +11,9 @@ export interface Item {
   contact_email: string; // ust.edu.ph address
   reporter_name: string; // Filipino name
   created_at: string; // ISO 8601 datetime string
+  secret_detail?: string; // set by reporter; never shown publicly
+  claim_answer?: string; // set by claimant after revealing secret_detail
+  claimant_name?: string; // display name of the claimant
 }
 
 export interface User {

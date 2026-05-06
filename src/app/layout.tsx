@@ -3,7 +3,7 @@ import "./globals.css";
 import NavbarWrapper from "@/components/NavbarWrapper";
 
 export const metadata: Metadata = {
-  title: "UST Lost and Found",
+  title: "NasaUSTe",
   description: "University of Santo Tomas Lost and Found System",
 };
 

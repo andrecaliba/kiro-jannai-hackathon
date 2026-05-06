@@ -22,7 +22,7 @@ export default function Navbar() {
           href="/dashboard"
           className="text-ust-gold font-bold text-lg tracking-tight hover:opacity-90 transition-opacity"
         >
-          UST Lost and Found
+          NasaUSTe
         </Link>
 
         {/* Nav links */}

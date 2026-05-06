@@ -25,7 +25,7 @@ export default function LoginPage() {
         {/* Login Card */}
         <Card className="p-8 w-full max-w-sm">
           <h1 className="text-xl font-bold text-gray-900 mb-2">
-            UST Lost and Found
+            NasaUSTe
           </h1>
           <p className="text-gray-700 text-sm mb-6">
             Sign in to report or manage lost and found items

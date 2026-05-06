@@ -39,7 +39,7 @@ export default function DashboardPage() {
       {/* Hero Banner */}
       <section className="bg-gradient-to-br from-ust-black via-gray-900 to-gray-800 text-white py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-3">UST Lost and Found</h1>
+          <h1 className="text-4xl font-bold mb-3">NasaUSTe</h1>
           <p className="text-gray-300 text-lg mb-8 max-w-xl mx-auto">
             Report lost items or help reunite found belongings with their owners
             across the UST campus.

@@ -207,14 +207,14 @@ Build a frontend-only Next.js 16+ prototype for the University of Santo Tomas Lo
   - No additional logic needed — all behavior is in `ItemForm`
   - _Requirements: 11.1_
 
-- [-] 16. Checkpoint — Ensure all tests pass
+- [x] 16. Checkpoint — Ensure all tests pass
   - Run `npm run lint` and fix any ESLint errors
   - Run `npm run build` and resolve any TypeScript errors
   - Verify all routes render without crashing: `/login`, `/dashboard`, `/items`, `/items/[id]` (any valid id), `/report/lost`, `/report/found`
   - Verify Navbar is absent on `/login` and present on all other routes
   - Ask the user if any questions arise before proceeding
 
-- [~] 17. Write all remaining property-based tests
+- [x] 17. Write all remaining property-based tests
   - Create a test file (e.g., `src/__tests__/properties.test.ts`) using `fast-check`
   - Each test uses the tag format: `Feature: ust-lost-and-found, Property {N}: {property_text}`
   - Minimum 100 iterations per property (`numRuns: 100`)
@@ -227,7 +227,7 @@ Build a frontend-only Next.js 16+ prototype for the University of Santo Tomas Lo
     - Property 13: `ItemForm` validation (if not already written in task 8.1)
   - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 3.6, 3.7, 3.8, 3.9, 8.8, 8.9, 10.7, 11.7_
 
-- [~] 18. Final checkpoint — Build, lint, and verify
+- [x] 18. Final checkpoint — Build, lint, and verify
   - Run `npm run lint` — must report zero ESLint errors
   - Run `npm run build` — must complete with no TypeScript errors and no build failures
   - Confirm the dev server starts with `npm run dev` on port 3000

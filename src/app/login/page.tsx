@@ -27,7 +27,7 @@ export default function LoginPage() {
           <h1 className="text-xl font-bold text-gray-900 mb-2">
             UST Lost and Found
           </h1>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-gray-700 text-sm mb-6">
             Sign in to report or manage lost and found items
           </p>
 
@@ -39,7 +39,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleSignIn}
-              className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg px-4 py-2 w-full font-medium transition-colors cursor-pointer"
+              className="border border-gray-300 text-gray-900 hover:bg-gray-50 rounded-lg px-4 py-2 w-full font-medium transition-colors cursor-pointer"
             >
               Continue with Demo Account
             </button>

@@ -66,7 +66,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
         {/* Category pill */}
         <div className="mb-2">
-          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
             {item.category}
           </span>
         </div>
@@ -78,7 +78,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
         {/* Description (only for unprotected items) */}
         {!protected_ && (
-          <p className="text-xs text-gray-500 line-clamp-2 mb-3 flex-1">
+          <p className="text-xs text-gray-600 line-clamp-2 mb-3 flex-1">
             {item.description}
           </p>
         )}
@@ -87,13 +87,13 @@ export default function ItemCard({ item }: ItemCardProps) {
         {protected_ && <div className="flex-1" />}
 
         {/* Location and date */}
-        <div className="mt-auto pt-2 border-t border-gray-50 space-y-1">
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <span className="font-medium text-gray-400">Location</span>
+        <div className="mt-auto pt-2 border-t border-gray-100 space-y-1">
+          <div className="flex items-center gap-1 text-xs text-gray-600">
+            <span className="font-medium text-gray-500">Location</span>
             <span>{item.location}</span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <span className="font-medium text-gray-400">Date</span>
+          <div className="flex items-center gap-1 text-xs text-gray-600">
+            <span className="font-medium text-gray-500">Date</span>
             <span>{formatDate(item.date)}</span>
           </div>
         </div>

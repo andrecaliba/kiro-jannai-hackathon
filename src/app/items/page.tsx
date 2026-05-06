@@ -122,14 +122,14 @@ function ItemsCatalogInner() {
         {/* Clear Filters button */}
         <button
           onClick={resetFilters}
-          className="border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors whitespace-nowrap"
+          className="border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 transition-colors whitespace-nowrap"
         >
           Clear Filters
         </button>
       </div>
 
       {/* Filtered item count */}
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-600 mb-4">
         {filteredItems.length} {filteredItems.length === 1 ? "item" : "items"} found
       </p>
 
@@ -142,8 +142,8 @@ function ItemsCatalogInner() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-gray-500 text-lg font-medium mb-2">No items found</p>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-700 text-lg font-medium mb-2">No items found</p>
+          <p className="text-gray-500 text-sm">
             Try adjusting your filters or search terms.
           </p>
         </div>
@@ -154,7 +154,7 @@ function ItemsCatalogInner() {
 
 export default function ItemsPage() {
   return (
-    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-gray-700">Loading...</div>}>
       <ItemsCatalogInner />
     </Suspense>
   );

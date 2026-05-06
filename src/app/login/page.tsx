@@ -43,6 +43,19 @@ export default function LoginPage() {
             >
               Continue with Demo Account
             </button>
+
+            <div className="relative flex items-center my-1">
+              <div className="flex-grow border-t border-gray-200" />
+              <span className="mx-3 text-xs text-gray-400">or</span>
+              <div className="flex-grow border-t border-gray-200" />
+            </div>
+
+            <Link
+              href="/dashboard"
+              className="text-center text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              Browse as Guest
+            </Link>
           </div>
         </Card>
       </div>

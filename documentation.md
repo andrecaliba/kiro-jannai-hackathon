@@ -26,7 +26,6 @@ NasaUSTe is a frontend-only prototype web application for the University of Sant
 
 | Role | Description |
 |---|---|
-| **Guest** | Any visitor who has not signed in. Can browse the dashboard and items catalog, but cannot report items or initiate a claim. |
 | **Signed-in User** | A visitor who has completed the login flow. Can report items, mark items as claimed or resolved, and initiate the claim verification flow. |
 | **Reporter** | The signed-in user who originally submitted an item report. Identified by matching `contact_email` on the item. |
 | **Claimant** | A signed-in user (other than the reporter) who believes an item belongs to them and submits a claim answer. |
@@ -66,7 +65,7 @@ Authentication is simulated. No real credentials are checked.
 
 ## 4. Dashboard
 
-The Dashboard (`/dashboard`) is the home page of the application. It is accessible to both guests and signed-in users.
+The Dashboard (`/dashboard`) is the home page of the application.
 
 **Contents:**
 
